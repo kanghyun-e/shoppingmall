@@ -2,7 +2,25 @@ package kr.khlee.myshop.services;
 
 import kr.khlee.myshop.models.Member;
 
-public interface MemberServices {
+import java.util.List;
 
-    public void isUniqueId(Member member) throws Exception;
+public interface MemberService {
+
+    public void isUniqueUserId(Member input) throws Exception;
+
+    public void isUniqueEmail(Member input) throws Exception;
+
+    public Member join(Member input) throws Exception;
+
+    public Member login(Member input) throws Exception;
+
+    public Member findId(Member input) throws Exception;
+
+    public void resetPw(Member input) throws Exception;
+
+    public Member update(Member input) throws Exception;
+
+    public void out(Member input) throws Exception;
+
+    public List<Member> processOutMembers() throws Exception;
 }

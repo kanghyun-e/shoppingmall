@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang = "ko"  translate="no" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{_fragments/_head :: my-head('상품목록')}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/product.css}"/>
+</head>
+
+<body>
+    <th:block th:replace="~{_fragments/header}"/>
+
+    <div class="container">
+
+        <th:block th:replace="~{_fragments/sidebar}"/>
+
+        <div class="product-grid">
+
+            <div class = "product-header">
+                <h1 class="product-category-title" th:text="${categoryName}"/>
+                <form method="get" class="search-form">
+                    <div class="search-input-container">
+                        <i class="search-icon fa fa-search"></i>
+                        <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}"/>
+                    </div>
+                    <button type="submit">검색</button>
+                </form>
+            </div>
+
+            <a class="product-card" th:each="p: ${products}"
+                th:href="@{/products/detail/{productId}/{categoryId}(productId=${p.id}, categoryId=${categoryId})}">
+                <span class="discount-badge" th:if="${p.discount > 0}">
+                    <span th:text="${p.discount}"/> % OFF
+                </span>
+                <img th:src="${@fileHelper.getFileUrl(p.imageUrl)}" th:alt="${p.name}">
+                <h4 th:text="${p.name}"/>
+                <p class="summary" th:text="${p.summary}" />
+                <p th:if="${p.discount > 0}">
+                    <del th:text="|₩${p.price}|" />
+                    <strong style="color:#e60023;" th:text="|₩${p.price - (p.price * p.discount / 100)}|" />
+                </p>
+                <p th:unless="${p.discount > 0}">
+                    <strong th:text="|₩${p.price}|" />
+                </p>
+            </a>
+            <!-- 페이지 번호 -->
+            <ul class="pagination">
+                <!-- 이전 페이지 이동 버튼 -->
+                <li th:if="${pageHelper.prevPage > 0}">
+                    <a th:href="@{/products/{categoryId}(categoryId=${categoryId}, keyword=${keyword}, page=${pageHelper.prevPage})}">«</a>
+                </li>
+                <li th:unless="${pageHelper.prevPage > 0}"><a>«</a></li>
+
+                <!-- 페이지 번호 링크 -->
+                <li th:each="i : ${#numbers.sequence(pageHelper.startPage, pageHelper.endPage)}">
+                    <a th:if="${i == pageHelper.nowPage}" class="active" th:text="${i}"/>
+                    <a th:unless="${i == pageHelper.nowPage}" th:text="${i}" th:href="@{/products/{categoryId}(categoryId=${categoryId}, keyword=${keyword}, page=${i})}"/>
+                </li>
+
+                <!-- 다음 페이지 이동 버튼 -->
+                <li th:if="${pageHelper.nextPage > 0}">
+                    <a th:href="@{/products/{categoryId}(categoryId=${categoryId}, keyword=${keyword}, page=${pageHelper.nextPage})}">»</a>
+                </li>
+                <li th:unless="${pageHelper.nextPage > 0}"><a>»</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <th:block th:replace="~{_fragments/footer}"/>
+</body>
+</html>
