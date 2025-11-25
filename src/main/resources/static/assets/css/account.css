@@ -5,11 +5,11 @@
     --background-color: #f4f6f9;
     --container-bg-color: #fff;
     --box-shadow-color: rgba(0, 0, 0, 0.1);
-    --primary-color: #4caf50;
-    --primary-color-hover: #45a049;
+    --primary-color: #ff5252;
+    --primary-color-hover: #ff5210;
     --border-color: #ccc;
     --text-color: #333;
-    --link-color: #4caf50;
+    --link-color: #ff5252;
 
     /* 크기 및 패딩 변수 */
     --container-padding: 40px;
