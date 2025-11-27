@@ -5,6 +5,31 @@
     <link rel="stylesheet" th:href="@{/assets/css/account.css}">
 </head>
 <body>
+
+<!-- 홈으로 이동 버튼 -->
+<a href="/" class="home-link">← 홈으로</a>
+
+<style>
+    .home-link {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #ff5252;
+        text-decoration: none;
+        z-index: 2000;
+        padding: 6px 12px;
+        background: #ffffffcc;
+        backdrop-filter: blur(4px);
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+    .home-link:hover {
+        background: #fff;
+        color: #e40000;
+    }
+</style>
     <div class="account-container account" th:if="${session.memberInfo == null}">
         <h2 class="page-title">환영합니다!</h2>
         <p>로그인 후 다양한 서비스를 이용하실 수 있습니다.</p>

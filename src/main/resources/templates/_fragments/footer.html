@@ -3,3 +3,27 @@
         <p>2025 All rights reserved.</p>
     </div>
 </footer>
+
+<!-- ① FetchHelper.js 로드 (가장 중요) -->
+<script th:src="@{/assets/js/FetchHelper.js}"></script>
+
+<!-- ② 로그아웃 기능 -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const logoutBtn = document.querySelector("#logout-btn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async (e) => {
+                e.preventDefault();
+
+                try {
+                    await fetchHelper.get("/api/account/logout");
+                } catch (err) {
+                    alert(err.message);
+                    return;
+                }
+
+                window.location.href = "/";
+            });
+        }
+    });
+</script>

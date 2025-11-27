@@ -1,9 +1,26 @@
 <header>
     <div class="header-container">
-        <div class="logo">Devory</div>
+        <div class="logo">
+            <a th:href="@{/}" style="text-decoration:none; color:#333;">Devory</a>
+        </div>
+
         <div class="auth-links">
-            <a th:href="@{/account/login}">로그인</a>
-            <a th:href="@{/account/join}">회원가입</a>
+
+            <!-- 로그아웃 상태 (session.memberInfo == null) -->
+            <th:block th:if="${session.memberInfo == null}">
+                <a th:href="@{/account/login}">로그인</a>
+                <a th:href="@{/account/join}">회원가입</a>
+            </th:block>
+
+            <!-- 로그인 상태 -->
+            <th:block th:unless="${session.memberInfo == null}">
+                <a th:href="@{/api/account/logout}" id="logout-btn">로그아웃</a>
+                <a th:href="@{/account}" id="mypage-btn">마이페이지</a>
+                <a th:href="@{/cart}">장바구니</a>
+            </th:block>
+
         </div>
     </div>
 </header>
+
+

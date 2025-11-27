@@ -7,6 +7,31 @@
 </head>
 
 <body>
+
+<!-- 홈으로 이동 버튼 -->
+<a href="/" class="home-link">← 홈으로</a>
+
+<style>
+    .home-link {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #ff5252;
+        text-decoration: none;
+        z-index: 2000;
+        padding: 6px 12px;
+        background: #ffffffcc;
+        backdrop-filter: blur(4px);
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+    .home-link:hover {
+        background: #fff;
+        color: #e40000;
+    }
+</style>
 <!-- 로딩바 -->
 <img th:src="@{/assets/img/loading.gif}" id="loader" />
 

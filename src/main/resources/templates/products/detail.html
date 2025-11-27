@@ -124,6 +124,7 @@
 
 <th:block th:replace="~{_fragments/footer}" />
 
+
     <!-- JavaScript 변수 설정 및 초기화 -->
     <script th:src="@{/assets/js/FetchHelper.js}"></script>
     <script th:inline="javascript">
@@ -136,5 +137,26 @@
             };
     </script>
     <script th:src="@{/assets/js/product_detail.js}"></script>
+
+<script>
+    document.querySelector(".btn-cart").addEventListener("click", async () => {
+
+        const optionText = window.selectedOptionsString || "";   // 선택 옵션 문자열
+        const quantity = 1; // 기본 1개
+
+        try {
+            await fetchHelper.post("/api/cart/add", {
+                productId: productData.id,
+                optionText: optionText,
+                quantity: quantity
+            });
+            alert("장바구니에 담겼습니다!");
+            window.location.href = "/cart";
+
+        } catch(err){
+            alert(err.message);
+        }
+    });
+</script>
 </body>
 </html>

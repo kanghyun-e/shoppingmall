@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{_fragments/_head :: my-head('장바구니')}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/product.css}">
+    <style>
+        .cart-container { max-width: 1000px; margin: 40px auto; }
+        .cart-item { display:flex; padding:20px; border-bottom:1px solid #eee; align-items:center; }
+        .cart-item img { width:120px; height:auto; border-radius:6px; margin-right:20px; }
+        .cart-info { flex:1; }
+        .cart-title { font-size:20px; font-weight:bold; }
+        .cart-option { color:#777; font-size:14px; margin-top:5px; }
+        .cart-price { color:#e60023; font-size:20px; font-weight:bold; margin-top:10px; }
+        .qty-box { display:flex; align-items:center; gap:10px; margin-top:10px; }
+        .qty-btn { width:30px; height:30px; background:#eee; border:none; border-radius:4px; cursor:pointer; }
+        .qty-input { width:50px; text-align:center; }
+        .delete-btn { background:#ff4d4d; color:#fff; padding:8px 12px; border:none; border-radius:6px; cursor:pointer; }
+        .total-box { text-align:right; padding:30px; font-size:24px; font-weight:bold; }
+        .buy-btn { background:#ff5252; color:#fff; padding:12px 30px; border:none; border-radius:8px; cursor:pointer; font-size:18px; }
+    </style>
+</head>
+
+<body>
+<th:block th:replace="~{_fragments/header}"/>
+
+<div class="cart-container">
+
+    <h1>장바구니</h1>
+
+    <!-- 장바구니 비었을 때 -->
+    <div th:if="${#lists.isEmpty(carts)}" style="padding:50px; text-align:center; color:#777;">
+        장바구니에 담긴 상품이 없습니다.
+    </div>
+
+    <!-- 장바구니 목록 -->
+    <div th:each="c : ${carts}" class="cart-item">
+
+        <img th:src="${@fileHelper.getFileUrl(c.product.imageUrl)}">
+
+        <div class="cart-info">
+            <div class="cart-title" th:text="${c.product.name}"></div>
+            <div class="cart-option" th:text="${c.optionText}"></div>
+
+            <!-- 할인 적용된 개별 단가 -->
+            <div class="cart-price"
+                 th:text="|₩${#numbers.formatInteger(c.discountedPrice, 0, 'COMMA')}|"></div>
+
+            <!-- 수량 변경 -->
+            <!-- 수량 변경 -->
+            <div class="qty-box">
+                <button class="qty-btn" th:onclick="changeQty([[${c.id}]], -1)">-</button>
+                <input type="text" class="qty-input" th:value="${c.quantity}" readonly>
+                <button class="qty-btn" th:onclick="changeQty([[${c.id}]], 1)">+</button>
+            </div>
+        </div>
+
+        <!-- 삭제 버튼 -->
+        <button class="delete-btn" th:onclick="deleteItem([[${c.id}]])">삭제</button>
+    </div>
+
+    <!-- 총 합계 -->
+    <div class="total-box">
+        총 합계:
+        <span id="total-price"
+              th:text="|₩${#numbers.formatInteger(totalPrice, 0, 'COMMA')}|">
+    </span>
+    </div>
+
+
+    <div style="text-align:right;" th:if="${!#lists.isEmpty(carts)}">
+        <button class="buy-btn">전체 구매하기</button>
+    </div>
+
+</div>
+
+<th:block th:replace="~{_fragments/footer}"/>
+
+<script th:inline="javascript">
+
+    async function changeQty(id, diff) {
+        await fetchHelper.post("/api/cart/update", { id:id, quantity:diff });
+        window.location.reload();
+    }
+
+    async function deleteItem(id) {
+        if(!confirm("정말 삭제할까요?")) return;
+        await fetchHelper.post("/api/cart/delete", { id:id });
+        window.location.reload();
+    }
+
+</script>
+
+</body>
+</html>
