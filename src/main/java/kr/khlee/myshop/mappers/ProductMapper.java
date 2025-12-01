@@ -17,9 +17,9 @@ public interface ProductMapper {
             "<if test='name != null and name != \"\"'> name LIKE concat('%', #{name}, '%')</if>" +
             "</where>"
             + "ORDER BY id DESC "
-            + "LIMIT 0, 12"
-            + "</script>"
-            )
+            + "<if test='listCount > 0'> LIMIT #{offset}, #{listCount}</if>" +
+            "</script>"
+    )
     @Results(id = "resultMap")
     public List<Product> getProducts(Product input);
 
