@@ -33,7 +33,7 @@ public class AccountScheduler {
 
 //  @Scheduled(cron = "0 0 4 * * ?")
 //    @Scheduled(cron = "15 * * * * ?")
-  @Scheduled(cron="0 0/30 * * * ?")
+  @Scheduled(cron="0 0/15 * * * ?")
     public void processOutMembers() throws Exception{
         log.debug("탈퇴 회원 정리 시작");
 
