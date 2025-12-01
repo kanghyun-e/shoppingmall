@@ -126,23 +126,73 @@
 
 
     <!-- JavaScript 변수 설정 및 초기화 -->
-    <script th:src="@{/assets/js/FetchHelper.js}"></script>
-    <script th:inline="javascript">
-        // 페이지 로드 시 JavaScript 변수 초기화: 현재 상품 정보 저장
-            const productData = {
-                id: [[${product.id}]],
-                name: [[${product.name}]],
-                price: [[${product.price}]],
-                discount: [[${product.discount}]],
-            };
-    </script>
-    <script th:src="@{/assets/js/product_detail.js}"></script>
+<!-- FetchHelper -->
+<script th:src="@{/assets/js/FetchHelper.js}"></script>
 
+<script th:inline="javascript">
+    const productData = {
+        id: [[${product.id}]],
+        name: [[${product.name}]],
+        price: [[${product.price}]],
+        discount: [[${product.discount}]],
+    };
+</script>
+
+<!-- 옵션 선택/검증/장바구니 담기 기능 통합 스크립트 -->
 <script>
+    // 선택된 옵션 저장
+    window.selectedOptions = {};
+    window.selectedOptionsString = "";
+
+    // 옵션 클릭 시 선택/해제 처리
+    document.querySelectorAll(".option-value").forEach(el => {
+        el.addEventListener("click", () => {
+
+            const optionName = el.dataset.optionName;   // 예: 색상
+            const optionValue = el.textContent.trim();  // 예: 빨강
+
+            // 같은 그룹에서 다른 것 선택하면 교체
+            window.selectedOptions[optionName] = optionValue;
+
+            // UI 강조
+            el.parentElement.querySelectorAll(".option-value")
+                .forEach(s => s.classList.remove("selected"));
+            el.classList.add("selected");
+
+            // 옵션 문자열로 변환
+            window.selectedOptionsString =
+                Object.entries(window.selectedOptions)
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(", ");
+
+            console.log("selectedOptionsString =", window.selectedOptionsString);
+        });
+    });
+
+    // 옵션 선택 강제
+    function validateOptionSelection() {
+        const optionGroups = document.querySelectorAll(".option-group");
+
+        if (optionGroups.length === 0) return true; // 옵션 없는 상품
+
+        for (let group of optionGroups) {
+            const optionName = group.querySelector(".option-label").textContent.trim();
+            if (!window.selectedOptions[optionName]) {
+                alert(`${optionName} 옵션을 선택해주세요.`);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 장바구니 담기 버튼
     document.querySelector(".btn-cart").addEventListener("click", async () => {
 
-        const optionText = window.selectedOptionsString || "";   // 선택 옵션 문자열
-        const quantity = 1; // 기본 1개
+        // 옵션 체크
+        if (!validateOptionSelection()) return;
+
+        const optionText = window.selectedOptionsString; // 선택된 옵션 문자열
+        const quantity = 1;
 
         try {
             await fetchHelper.post("/api/cart/add", {
@@ -150,13 +200,48 @@
                 optionText: optionText,
                 quantity: quantity
             });
+
             alert("장바구니에 담겼습니다!");
             window.location.href = "/cart";
 
-        } catch(err){
-            alert(err.message);
+        } catch (err) {
+            alert("장바구니 담기 실패: " + err.message);
         }
     });
+
+
 </script>
+
+<script>
+    // 상품 상세 탭 전환 기능 복구
+    document.querySelectorAll(".tab-header").forEach(tab => {
+        tab.addEventListener("click", () => {
+            const target = tab.dataset.target; // detail 또는 delivery
+
+            // 탭 헤더 active 처리
+            document.querySelectorAll(".tab-header")
+                .forEach(th => th.classList.remove("active"));
+            tab.classList.add("active");
+
+            // 탭 콘텐츠 active 처리
+            document.querySelectorAll(".tab-pane")
+                .forEach(pane => pane.classList.remove("active"));
+
+            document.querySelector(`#${target}-tab`).classList.add("active");
+        });
+    });
+</script>
+
+<style>
+    /* 선택된 옵션 UI 강조 */
+    .option-value.selected {
+        border: 1px solid #e60023;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: #ffecec;
+    }
+</style>
+
+
 </body>
 </html>

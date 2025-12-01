@@ -6,6 +6,8 @@ import kr.khlee.myshop.models.Member;
 import kr.khlee.myshop.services.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,12 +21,12 @@ public class CartRestController {
 
     private final CartService cartService;
 
-    @PostMapping("/add")
-    public void add(
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> add(
             @SessionAttribute("memberInfo") Member member,
-            @RequestParam int productId,
-            @RequestParam(required = false) String optionText,
-            @RequestParam int quantity
+            @RequestParam("productId") int productId,
+            @RequestParam(value = "optionText", required = false) String optionText,
+            @RequestParam("quantity") int quantity
     ) throws Exception {
 
         Cart input = new Cart();
@@ -34,7 +36,11 @@ public class CartRestController {
         input.setQuantity(quantity);
 
         cartService.add(input);
+
+        // commit 이후 응답됨
+        return ResponseEntity.ok(Map.of("status", "OK"));
     }
+
 
     @PostMapping("/update")
     public void update(
